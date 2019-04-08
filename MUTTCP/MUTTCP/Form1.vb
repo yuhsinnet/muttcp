@@ -12,15 +12,20 @@
 
         ServiceA = New MTTCP(TGIP1.Text, CInt(TGPort1.Text), CInt(BindPort1.Text))
 
+        CheckTextBox.Text = CheckSum(SendTextBox.Text)
         'ServiceA.Stss(TGIP1.Text, CInt(TGPort1.Text), CInt(BindPort1.Text))
     End Sub
 
     Sub PrintText(Text As String) Handles ServiceA.PrintText
 
-        SetText(Text & Format(Now, "hh時mm分ss.fff秒"))
+        SetText(Text & Format(Now, "hh時mm分ss.fff秒") & vbCrLf)
 
     End Sub
+    Sub PrintTextM(Text As String)
 
+        SetText(Text & "<-" & Format(Now, "hh時mm分ss.fff秒") & vbCrLf)
+
+    End Sub
 
     Delegate Sub SetTextCallback([text] As String)
     ' This method demonstrates a pattern for making thread-safe
@@ -66,7 +71,16 @@
     End Function
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles SendTestButton.Click
-        ServiceA.TCPc_Write(Chr(2) & SendTextBox.Text & CheckTextBox.Text & Chr(3))
+
+        Dim sendbuf As String = Chr(2) & SendTextBox.Text & CheckTextBox.Text & Chr(3)
+
+        'Dim sendbytesbuf As Byte() = System.Text.Encoding.ASCII.GetBytes(sendbuf)
+        'Dim printBuf As String = System.Text.Encoding.ASCII.GetString(ServiceA.TCPc_Write(sendbytesbuf))
+        'PrintTextM(printBuf.Remove(printBuf.IndexOf(vbNullChar)))
+        PrintTextM(sendbuf)
+        Dim RXbuf As String = ServiceA.TCPc_Write(sendbuf)
+
+        PrintTextM(RXbuf)
 
     End Sub
 

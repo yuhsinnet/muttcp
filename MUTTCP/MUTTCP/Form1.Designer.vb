@@ -158,7 +158,7 @@ Partial Class Form1
         '
         'CheckTextBox
         '
-        Me.CheckTextBox.Location = New System.Drawing.Point(445, 398)
+        Me.CheckTextBox.Location = New System.Drawing.Point(445, 397)
         Me.CheckTextBox.Name = "CheckTextBox"
         Me.CheckTextBox.Size = New System.Drawing.Size(42, 22)
         Me.CheckTextBox.TabIndex = 14
