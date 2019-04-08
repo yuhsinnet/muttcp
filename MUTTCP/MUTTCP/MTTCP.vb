@@ -23,17 +23,6 @@ Public Class MTTCP
 
     End Sub
 
-    Sub Stss(TGIP As String, TGPort As Integer, BindPort As Integer)
-
-        '初始化連線
-        TCPc.BeginConnect(TGIP, TGPort, AddressOf TCPc_Connect_ACB, "")
-
-
-
-
-
-
-    End Sub
 
     Private Sub TCPc_Connect_ACB(ar As IAsyncResult)
 
@@ -48,8 +37,7 @@ Public Class MTTCP
         End If
 
     End Sub
-
-    Sub TCPSendTimeDown()
+    Sub TCPcSendTimeDown()
 
         sendTimerIsDown = False
 
@@ -63,7 +51,7 @@ Public Class MTTCP
         '
         '
         Dim TCPSendTime As New Timers.Timer(200)
-        AddHandler TCPSendTime.Elapsed, AddressOf TCPSendTimeDown
+        AddHandler TCPSendTime.Elapsed, AddressOf TCPcSendTimeDown
         TCPSendTime.AutoReset = False
         TCPSendTime.Start()
         sendTimerIsDown = True
@@ -101,7 +89,7 @@ Public Class MTTCP
         '
         '
         Dim TCPSendTime As New Timers.Timer(200)
-        AddHandler TCPSendTime.Elapsed, AddressOf TCPSendTimeDown
+        AddHandler TCPSendTime.Elapsed, AddressOf TCPcSendTimeDown
         TCPSendTime.AutoReset = False
         TCPSendTime.Start()
         sendTimerIsDown = True
