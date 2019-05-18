@@ -37,6 +37,8 @@ Partial Class Form1
         Me.SendTestButton = New System.Windows.Forms.Button()
         Me.SendTextBox = New System.Windows.Forms.TextBox()
         Me.CheckTextBox = New System.Windows.Forms.TextBox()
+        Me.TextBox1 = New System.Windows.Forms.TextBox()
+        Me.GetQ = New System.Windows.Forms.Button()
         Me.SuspendLayout()
         '
         'TGIP1
@@ -163,11 +165,30 @@ Partial Class Form1
         Me.CheckTextBox.Size = New System.Drawing.Size(42, 22)
         Me.CheckTextBox.TabIndex = 14
         '
+        'TextBox1
+        '
+        Me.TextBox1.Location = New System.Drawing.Point(745, 12)
+        Me.TextBox1.Multiline = True
+        Me.TextBox1.Name = "TextBox1"
+        Me.TextBox1.Size = New System.Drawing.Size(196, 379)
+        Me.TextBox1.TabIndex = 15
+        '
+        'GetQ
+        '
+        Me.GetQ.Location = New System.Drawing.Point(745, 396)
+        Me.GetQ.Name = "GetQ"
+        Me.GetQ.Size = New System.Drawing.Size(75, 23)
+        Me.GetQ.TabIndex = 16
+        Me.GetQ.Text = "Get Q"
+        Me.GetQ.UseVisualStyleBackColor = True
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(800, 450)
+        Me.ClientSize = New System.Drawing.Size(953, 450)
+        Me.Controls.Add(Me.GetQ)
+        Me.Controls.Add(Me.TextBox1)
         Me.Controls.Add(Me.CheckTextBox)
         Me.Controls.Add(Me.SendTextBox)
         Me.Controls.Add(Me.SendTestButton)
@@ -205,4 +226,6 @@ Partial Class Form1
     Friend WithEvents SendTestButton As Button
     Friend WithEvents SendTextBox As TextBox
     Friend WithEvents CheckTextBox As TextBox
+    Friend WithEvents TextBox1 As TextBox
+    Friend WithEvents GetQ As Button
 End Class

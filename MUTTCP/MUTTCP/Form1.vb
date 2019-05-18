@@ -84,5 +84,19 @@
 
     End Sub
 
+    Private Sub GetQ_Click(sender As Object, e As EventArgs) Handles GetQ.Click
 
+        For Each dq As MTTCP.Stringq In ServiceA.q
+
+            TextBox1.AppendText(dq.index & " =>" & dq.str & vbCrLf)
+
+        Next
+
+
+
+
+
+
+
+    End Sub
 End Class

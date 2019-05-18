@@ -21,7 +21,13 @@ Public Class MTTCP
     Dim TCPsc(ClientNumber) As TcpClient
     Dim TCPscThread(ClientNumber) As Thread
 
+    Public q As New Queue
+    Public Class Stringq
 
+        Public index As Integer
+        Public str As String
+
+    End Class
     Dim sendTimerIsDown As Boolean
     Public Sub New(TGIP As String, TGPort As Integer, BindPort As Integer)
 
@@ -49,6 +55,9 @@ Public Class MTTCP
 
 
                     TCPsc(index) = TCPs.AcceptTcpClient
+                    TCPscThread(index) = New Thread(AddressOf TCPscReceive)
+                    TCPscThread(index).IsBackground = True
+                    TCPscThread(index).Start(index)
 
 
                     RaiseEvent PrintText("TCPsc is connect >.< " & "  TCPsc(" & index & ")     ")
@@ -69,6 +78,56 @@ Public Class MTTCP
 
 
     End Sub
+
+    Private Sub TCPscReceive(ByVal state As Object)
+
+        Dim index As Integer = CType(state, Integer)
+        Dim Read_buf(1024) As Byte
+        Dim Read_str As String
+
+
+        While True
+
+            Try
+                If TCPsc(index).Available > 3 Then
+
+                    TCPsc(index).GetStream.Read(Read_buf, 0, Read_buf.Length)
+                    Read_str = System.Text.Encoding.ASCII.GetString(Read_buf)
+
+                    Dim temp As New Stringq
+                    temp.index = index
+                    temp.str = RemoveNullChar(Read_str)
+
+                    q.Enqueue(temp)
+
+                    RaiseEvent PrintText("TCPsc is Receive >.< " & "  TCPsc(" & index & ")     DATA:(" & RemoveNullChar(Read_str) & ")")
+
+                End If
+            Catch ex As Exception
+
+                TCPsc(index).Close()
+                TCPsc(index) = Nothing
+                RaiseEvent PrintText("TCPsc is Disconnect >.< " & "  TCPsc(" & index & ")")
+                Exit While
+            End Try
+
+
+
+
+
+
+        End While
+
+        TCPscThread(index).Abort()
+        TCPscThread(index) = Nothing
+    End Sub
+
+    Private Shared Function RemoveNullChar(In_str As String) As String
+
+
+        Return In_str.Remove(In_str.IndexOf(vbNullChar))
+
+    End Function
 
     Private Sub TCPc_Connect_ACB(ar As IAsyncResult)
 
