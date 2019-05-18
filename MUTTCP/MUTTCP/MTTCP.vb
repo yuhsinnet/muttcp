@@ -10,29 +10,75 @@ Public Class MTTCP
     Public Delegate Sub PrintTextDG(ByVal Text As String)
     Public Event PrintText As PrintTextDG
 
+    Const ClientNumber As Integer = 3
 
     Dim TCPc As New TcpClient
+
     Dim TCPc_Stream As NetworkStream
+
+    Dim TCPs As TcpListener
+
+    Dim TCPsc(ClientNumber) As TcpClient
+    Dim TCPscThread(ClientNumber) As Thread
+
 
     Dim sendTimerIsDown As Boolean
     Public Sub New(TGIP As String, TGPort As Integer, BindPort As Integer)
 
-        '初始化連線
+        '初始化客戶端連線
         TCPc.BeginConnect(TGIP, TGPort, AddressOf TCPc_Connect_ACB, "")
+
+        Dim TCPsThread As New Thread(AddressOf StartTCPsListen)
+        TCPsThread.IsBackground = True
+        TCPsThread.Start(BindPort)
 
 
     End Sub
 
+    Private Sub StartTCPsListen(ByVal state As Object)
+        Dim iPort As Integer
+        iPort = CType(state, Integer)
+
+        TCPs = New TcpListener(IPAddress.Any, iPort)
+        TCPs.Start(TCPsc.Length)
+
+        Do
+            For index = 0 To (TCPsc.Length - 1)
+
+                If TCPsc(index) Is Nothing Then
+
+
+                    TCPsc(index) = TCPs.AcceptTcpClient
+
+
+                    RaiseEvent PrintText("TCPsc is connect >.< " & "  TCPsc(" & index & ")     ")
+
+
+
+                    Exit For
+
+                End If
+
+            Next
+
+
+
+        Loop
+
+
+
+
+    End Sub
 
     Private Sub TCPc_Connect_ACB(ar As IAsyncResult)
 
 
         If TCPc.Connected Then
 
-            RaiseEvent PrintText("connect >.< ")
+            RaiseEvent PrintText("TCPc is connect >.< ")
             TCPc_Stream = TCPc.GetStream
         Else
-            RaiseEvent PrintText("Faile >.< ")
+            RaiseEvent PrintText("TCPc is Faile >.< ")
 
         End If
 
@@ -76,7 +122,6 @@ Public Class MTTCP
         Return Read_buf
 
     End Function
-
     Public Function TCPc_Write(SendData As String) As String
         '
         ' SendData:
@@ -115,5 +160,13 @@ Public Class MTTCP
 
         Return ReturnBuf.Remove(ReturnBuf.IndexOf(vbNullChar))
     End Function
+
+
+
+
+
+
+
+
 
 End Class

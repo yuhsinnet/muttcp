@@ -77,10 +77,10 @@
         'Dim sendbytesbuf As Byte() = System.Text.Encoding.ASCII.GetBytes(sendbuf)
         'Dim printBuf As String = System.Text.Encoding.ASCII.GetString(ServiceA.TCPc_Write(sendbytesbuf))
         'PrintTextM(printBuf.Remove(printBuf.IndexOf(vbNullChar)))
-        PrintTextM(sendbuf)
+        PrintTextM("TX DATA: " & sendbuf)
         Dim RXbuf As String = ServiceA.TCPc_Write(sendbuf)
 
-        PrintTextM(RXbuf)
+        PrintTextM("RX DATA: " & RXbuf)
 
     End Sub
 
