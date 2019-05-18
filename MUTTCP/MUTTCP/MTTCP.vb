@@ -38,6 +38,35 @@ Public Class MTTCP
         TCPsThread.IsBackground = True
         TCPsThread.Start(BindPort)
 
+        Dim CoreThread As New Thread(AddressOf CorePress)
+        CoreThread.IsBackground = True
+        CoreThread.Start()
+
+
+
+    End Sub
+
+    Private Sub CorePress()
+
+        While True
+
+            If q.Count > 0 Then
+
+                Dim te As New Stringq
+                te = q.Dequeue()
+
+                Dim send_buf As String
+
+                send_buf = TCPc_Write(te.str)
+
+                Dim send_Bytes() = Text.Encoding.ASCII.GetBytes(send_buf)
+                TCPsc(te.index).GetStream.Write(send_Bytes, 0, send_Bytes.Length)
+
+            End If
+
+
+        End While
+
 
     End Sub
 
