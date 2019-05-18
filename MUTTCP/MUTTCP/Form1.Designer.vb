@@ -139,6 +139,7 @@ Partial Class Form1
         Me.MonitorText.Location = New System.Drawing.Point(130, 99)
         Me.MonitorText.Multiline = True
         Me.MonitorText.Name = "MonitorText"
+        Me.MonitorText.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
         Me.MonitorText.Size = New System.Drawing.Size(543, 292)
         Me.MonitorText.TabIndex = 11
         '

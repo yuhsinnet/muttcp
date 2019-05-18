@@ -20,6 +20,7 @@ Public Class MTTCP
 
     Dim TCPsc(ClientNumber) As TcpClient
     Dim TCPscThread(ClientNumber) As Thread
+    Dim TCPscIdleTime(ClientNumber) As Integer
 
     Public TCPsQueue As New Queue
     Public Class TCPsQueueCSS
@@ -52,7 +53,7 @@ Public Class MTTCP
 
             If TCPsQueue.Count > 0 Then
 
-
+                RaiseEvent PrintText("Q Get  >.< ")
                 Dim te As TCPsQueueCSS = TCPsQueue.Dequeue()
                 Dim send_buf As String
 
@@ -113,12 +114,16 @@ Public Class MTTCP
 
     Private Sub TCPscReceive(ByVal state As Object)
 
+        Const UPTime As Integer = 200 'x 100ms
+
         Dim index As Integer = CType(state, Integer)
 
         Dim Read_str As String
 
+        Dim TCPSendTime As New System.Threading.Timer(AddressOf TCPscSendTimeUp, index, 0, 100)
 
-        While True
+
+        While TCPscIdleTime(index) < UPTime
 
             Try
                 If TCPsc(index).Available > 3 Then
@@ -138,7 +143,7 @@ Public Class MTTCP
                     TCPsQueue.Enqueue(temp)
 
                     RaiseEvent PrintText("TCPsc is Receive >.< " & "  TCPsc(" & index & ")     DATA:(" & Read_str_remov & ")")
-
+                    TCPscIdleTime(index) = 0
                 Else
 
                     Thread.Sleep(1)
@@ -146,9 +151,8 @@ Public Class MTTCP
                 End If
             Catch ex As Exception
 
-                TCPsc(index).Close()
-                TCPsc(index) = Nothing
-                RaiseEvent PrintText("TCPsc is Disconnect >.< " & "  TCPsc(" & index & ")")
+
+
                 Exit While
             End Try
 
@@ -159,9 +163,35 @@ Public Class MTTCP
 
         End While
 
+        RaiseEvent PrintText("TCPsc is Disconnect >.< " & "  TCPsc(" & index & ")")
+        TCPSendTime.Dispose()
+        TCPsc(index).Close()
+        TCPsc(index) = Nothing
         TCPscThread(index).Abort()
         TCPscThread(index) = Nothing
+
     End Sub
+
+    Private Sub TCPscSendTimeUp(state As Object)
+
+        Dim index As Integer = CInt(state)
+
+        'Try
+        '    Dim send_buf(0) As Byte
+        '    TCPsc(index).GetStream.Write(send_buf, 0, send_buf.Length)
+        'Catch ex As Exception
+
+
+
+
+        'End Try
+
+        TCPscIdleTime(index) = TCPscIdleTime(index) + 1
+
+
+    End Sub
+
+
 
     Private Shared Function RemoveNullChar(In_str As String) As String
 
@@ -183,7 +213,7 @@ Public Class MTTCP
         End If
 
     End Sub
-    Sub TCPcSendTimeDown()
+    Sub TCPcSendTimeUp()
 
         sendTimerIsDown = False
 
@@ -197,7 +227,7 @@ Public Class MTTCP
         '
         '
         Dim TCPSendTime As New Timers.Timer(200)
-        AddHandler TCPSendTime.Elapsed, AddressOf TCPcSendTimeDown
+        AddHandler TCPSendTime.Elapsed, AddressOf TCPcSendTimeUp
         TCPSendTime.AutoReset = False
         TCPSendTime.Start()
         sendTimerIsDown = True
@@ -233,32 +263,56 @@ Public Class MTTCP
 
         '
         '
-        Dim TCPSendTime As New Timers.Timer(200)
-        AddHandler TCPSendTime.Elapsed, AddressOf TCPcSendTimeDown
+        Dim TCPSendTime As New Timers.Timer(1000)
+        AddHandler TCPSendTime.Elapsed, AddressOf TCPcSendTimeUp
         TCPSendTime.AutoReset = False
         TCPSendTime.Start()
         sendTimerIsDown = True
         '
         '
+        Dim ReadIndex As Integer = 0
 
-        Dim Read_buf(2048) As Byte
+        Dim ReturnBuf As String
+
         While sendTimerIsDown
 
-            Threading.Thread.Sleep(1)
 
-            If TCPc.Available > 3 Then
-                ' UdpClient.Receive blocks until a message is received from a remote host.
-                TCPc_Stream.Read(Read_buf, 0, Read_buf.Length)
+            Dim ReadLen As Integer = TCPc.Available
 
-                Exit While
+            If ReadLen > 3 Then
+
+                Dim Read_buf(1024) As Byte
+                TCPc_Stream.Read(Read_buf, ReadIndex, ReadLen)
+
+
+                For index As Integer = 0 To ReadIndex + ReadLen + 10
+
+                    If Read_buf(index) = 3 Then
+
+
+                        ReturnBuf = System.Text.Encoding.ASCII.GetString(Read_buf)
+                        ReturnBuf.Remove(ReturnBuf.IndexOf(vbNullChar))
+                        Return ReturnBuf
+
+
+                        Exit While
+
+                    End If
+
+                Next
+
+
+                ReadIndex = ReadLen
+
+
 
             End If
 
 
         End While
-        Dim ReturnBuf As String = System.Text.Encoding.ASCII.GetString(Read_buf)
 
-        Return ReturnBuf.Remove(ReturnBuf.IndexOf(vbNullChar))
+
+
     End Function
 
 
