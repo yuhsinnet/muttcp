@@ -19,6 +19,8 @@
     Sub PrintText(Text As String) Handles ServiceA.PrintText
 
         SetText(Text & Format(Now, "hh時mm分ss.fff秒") & vbCrLf)
+        GetQu()
+
 
     End Sub
     Sub PrintTextM(Text As String)
@@ -51,7 +53,29 @@
         End If
     End Sub
 
+    Delegate Sub SetqTextCallback([text] As String)
+    ' This method demonstrates a pattern for making thread-safe
+    ' calls on a Windows Forms control. 
+    '
+    ' If the calling thread is different from the thread that
+    ' created the TextBox control, this method creates a
+    ' SetTextCallback and calls itself asynchronously using the
+    ' Invoke method.
+    '
+    ' If the calling thread is the same as the thread that created
+    ' the TextBox control, the Text property is set directly. 
+    Private Sub SetqText(ByVal [text] As String)
 
+        ' InvokeRequired required compares the thread ID of the
+        ' calling thread to the thread ID of the creating thread.
+        ' If these threads are different, it returns true.
+        If Me.MonitorText.InvokeRequired Then
+            Dim d As New SetqTextCallback(AddressOf SetqText)
+            Me.Invoke(d, New Object() {[text]})
+        Else
+            Me.TextBox1.Text = [text]
+        End If
+    End Sub
     Private Sub TextBox2_DoubleClick(sender As Object, e As EventArgs) Handles CheckTextBox.DoubleClick
 
         CheckTextBox.Text = CheckSum(SendTextBox.Text)
@@ -85,18 +109,19 @@
     End Sub
 
     Private Sub GetQ_Click(sender As Object, e As EventArgs) Handles GetQ.Click
+        GetQu()
+
+    End Sub
+
+    Private Sub GetQu()
+        Dim str As String
 
         For Each dq As MTTCP.Stringq In ServiceA.q
 
-            TextBox1.AppendText(dq.index & " =>" & dq.str & vbCrLf)
+            str += (dq.index & " =>" & dq.str & vbCrLf)
 
+            'TextBox1.Text = str
+            SetqText(str)
         Next
-
-
-
-
-
-
-
     End Sub
 End Class
