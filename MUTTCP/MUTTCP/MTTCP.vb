@@ -21,8 +21,8 @@ Public Class MTTCP
     Dim TCPsc(ClientNumber) As TcpClient
     Dim TCPscThread(ClientNumber) As Thread
 
-    Public q As New Queue
-    Public Class Stringq
+    Public TCPsQueue As New Queue
+    Public Class TCPsQueueCSS
 
         Public index As Integer
         Public str As String
@@ -50,17 +50,20 @@ Public Class MTTCP
 
         While True
 
-            If q.Count > 0 Then
+            If TCPsQueue.Count > 0 Then
 
-                Dim te As New Stringq
-                te = q.Dequeue()
 
+                Dim te As TCPsQueueCSS = TCPsQueue.Dequeue()
                 Dim send_buf As String
 
                 send_buf = TCPc_Write(te.str)
 
                 Dim send_Bytes() = Text.Encoding.ASCII.GetBytes(send_buf)
                 TCPsc(te.index).GetStream.Write(send_Bytes, 0, send_Bytes.Length)
+                RaiseEvent PrintText("TCPsc is Transmit  >.< " & "  TCPsc(" & te.index & ")     DATA:(" & send_buf & ")")
+            Else
+
+                Thread.Sleep(1)
 
             End If
 
@@ -111,7 +114,7 @@ Public Class MTTCP
     Private Sub TCPscReceive(ByVal state As Object)
 
         Dim index As Integer = CType(state, Integer)
-        Dim Read_buf(1024) As Byte
+
         Dim Read_str As String
 
 
@@ -120,16 +123,25 @@ Public Class MTTCP
             Try
                 If TCPsc(index).Available > 3 Then
 
+                    Dim Read_buf(1024) As Byte
                     TCPsc(index).GetStream.Read(Read_buf, 0, Read_buf.Length)
                     Read_str = System.Text.Encoding.ASCII.GetString(Read_buf)
 
-                    Dim temp As New Stringq
+                    Dim Read_str_remov As String
+                    Read_str_remov = RemoveNullChar(Read_str)
+
+
+                    Dim temp As New TCPsQueueCSS
                     temp.index = index
-                    temp.str = RemoveNullChar(Read_str)
+                    temp.str = Read_str_remov
 
-                    q.Enqueue(temp)
+                    TCPsQueue.Enqueue(temp)
 
-                    RaiseEvent PrintText("TCPsc is Receive >.< " & "  TCPsc(" & index & ")     DATA:(" & RemoveNullChar(Read_str) & ")")
+                    RaiseEvent PrintText("TCPsc is Receive >.< " & "  TCPsc(" & index & ")     DATA:(" & Read_str_remov & ")")
+
+                Else
+
+                    Thread.Sleep(1)
 
                 End If
             Catch ex As Exception
@@ -229,7 +241,7 @@ Public Class MTTCP
         '
         '
 
-        Dim Read_buf(1024) As Byte
+        Dim Read_buf(2048) As Byte
         While sendTimerIsDown
 
             Threading.Thread.Sleep(1)

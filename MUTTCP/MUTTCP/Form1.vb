@@ -19,7 +19,7 @@
     Sub PrintText(Text As String) Handles ServiceA.PrintText
 
         SetText(Text & Format(Now, "hh時mm分ss.fff秒") & vbCrLf)
-        GetQu()
+        'GetQu()
 
 
     End Sub
@@ -116,7 +116,7 @@
     Private Sub GetQu()
         Dim str As String
 
-        For Each dq As MTTCP.Stringq In ServiceA.q
+        For Each dq As MTTCP.TCPsQueueCSS In ServiceA.TCPsQueue
 
             str += (dq.index & " =>" & dq.str & vbCrLf)
 
