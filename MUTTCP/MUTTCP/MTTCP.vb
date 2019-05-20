@@ -29,7 +29,7 @@ Public Class MTTCP
         Public str As String
 
     End Class
-    Dim sendTimerIsDown As Boolean
+    Dim sendTime As Integer
     Public Sub New(TGIP As String, TGPort As Integer, BindPort As Integer)
 
         '初始化客戶端連線
@@ -62,9 +62,10 @@ Public Class MTTCP
                 Dim send_Bytes() = Text.Encoding.ASCII.GetBytes(send_buf)
                 TCPsc(te.index).GetStream.Write(send_Bytes, 0, send_Bytes.Length)
                 RaiseEvent PrintText("TCPsc is Transmit  >.< " & "  TCPsc(" & te.index & ")     DATA:(" & send_buf & ")")
+                Thread.Sleep(10)
             Else
 
-                Thread.Sleep(1)
+                Thread.Sleep(10)
 
             End If
 
@@ -79,7 +80,7 @@ Public Class MTTCP
         iPort = CType(state, Integer)
 
         TCPs = New TcpListener(IPAddress.Any, iPort)
-        TCPs.Start(TCPsc.Length)
+        TCPs.Start()
 
         Do
             For index = 0 To (TCPsc.Length - 1)
@@ -176,16 +177,6 @@ Public Class MTTCP
 
         Dim index As Integer = CInt(state)
 
-        'Try
-        '    Dim send_buf(0) As Byte
-        '    TCPsc(index).GetStream.Write(send_buf, 0, send_buf.Length)
-        'Catch ex As Exception
-
-
-
-
-        'End Try
-
         TCPscIdleTime(index) = TCPscIdleTime(index) + 1
 
 
@@ -213,49 +204,17 @@ Public Class MTTCP
         End If
 
     End Sub
-    Sub TCPcSendTimeUp()
+    Private Sub TCPcSendTimeUp(state As Object)
 
-        sendTimerIsDown = False
+        sendTime += 1
 
     End Sub
-    Public Function TCPc_Write(SendData() As Byte) As Byte()
-        '
-        ' SendData:
-        ' 以位元組陣列的方式傳輸數據
-        TCPc_Stream.Write(SendData, 0, SendData.Length)
-
-        '
-        '
-        Dim TCPSendTime As New Timers.Timer(200)
-        AddHandler TCPSendTime.Elapsed, AddressOf TCPcSendTimeUp
-        TCPSendTime.AutoReset = False
-        TCPSendTime.Start()
-        sendTimerIsDown = True
-        '
-        '
-
-        Dim Read_buf(1024) As Byte
-        While sendTimerIsDown
-
-            Threading.Thread.Sleep(1)
-
-            If TCPc.Available > 3 Then
-                ' UdpClient.Receive blocks until a message is received from a remote host.
-                TCPc_Stream.Read(Read_buf, 0, Read_buf.Length)
-
-                Exit While
-
-            End If
-
-
-        End While
-        Return Read_buf
-
-    End Function
     Public Function TCPc_Write(SendData As String) As String
         '
         ' SendData:
         ' 以字串的方式傳輸數據
+
+        Const UPTime As Integer = 200 'x 100ms
 
         Dim SendBuf As Byte() = Text.ASCIIEncoding.ASCII.GetBytes(SendData)
 
@@ -263,54 +222,47 @@ Public Class MTTCP
 
         '
         '
-        Dim TCPSendTime As New Timers.Timer(1000)
-        AddHandler TCPSendTime.Elapsed, AddressOf TCPcSendTimeUp
-        TCPSendTime.AutoReset = False
-        TCPSendTime.Start()
-        sendTimerIsDown = True
+        Dim TCPScendTime As New Threading.Timer(AddressOf TCPcSendTimeUp, vbNull, 0, 100) '100ms
+        sendTime = 0
+
         '
         '
         Dim ReadIndex As Integer = 0
 
         Dim ReturnBuf As String
-
-        While sendTimerIsDown
-
-
-            Dim ReadLen As Integer = TCPc.Available
-
-            If ReadLen > 3 Then
-
-                Dim Read_buf(1024) As Byte
-                TCPc_Stream.Read(Read_buf, ReadIndex, ReadLen)
-
-
-                For index As Integer = 0 To ReadIndex + ReadLen + 10
-
-                    If Read_buf(index) = 3 Then
-
-
-                        ReturnBuf = System.Text.Encoding.ASCII.GetString(Read_buf)
-                        ReturnBuf.Remove(ReturnBuf.IndexOf(vbNullChar))
-                        Return ReturnBuf
-
-
-                        Exit While
-
-                    End If
-
-                Next
-
-
-                ReadIndex = ReadLen
+        Dim ReadLen As Integer
+        Dim DetETX As Integer
+        Dim Read_buf(1024) As Byte
+        While sendTime < UPTime
+            Thread.Sleep(5)
 
 
 
-            End If
+            ReadLen = TCPc.Available
+            TCPc_Stream.Read(Read_buf, ReadIndex, ReadLen)
 
+
+            For DetETX = 0 To ReadIndex + ReadLen + 10
+
+                If Read_buf(DetETX) = 3 Then
+                    sendTime = 0
+
+                    ReturnBuf = System.Text.Encoding.ASCII.GetString(Read_buf).Remove(DetETX + 1)
+                    Array.Clear(Read_buf, 0, Read_buf.Length)
+                    Exit While
+
+                End If
+
+            Next
+
+
+            ReadIndex = ReadLen
 
         End While
 
+
+
+        Return ReturnBuf
 
 
     End Function
