@@ -60,6 +60,7 @@ Public Class MTTCP
 
         TCPs0c = TCPs0.AcceptTcpClient
 
+        TCPc_Stream = TCPs0c.GetStream
 
 
         RaiseEvent PrintText("TCPsc is connect >.< " & "  TCPs0" & "     ")
