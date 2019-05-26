@@ -24,6 +24,11 @@ Public Class MTTCP
     Dim TCPscIdleTime(ClientNumber) As Integer
 
     Public TCPsQueue As New Queue
+
+
+    Dim TCPs0Thread As Thread
+    Dim TCPsThread As Thread
+    Dim CoreThread As Thread
     Public Class TCPsQueueCSS
 
         Public index As Integer
@@ -34,21 +39,28 @@ Public Class MTTCP
     Public Sub New(TGPort As Integer, MYBindPort As Integer)
 
         '初始化客戶端連線
-        Dim TCPs0Thread As New Thread(AddressOf StartTCPs0Listen)
+        TCPs0Thread = New Thread(AddressOf StartTCPs0Listen)
         TCPs0Thread.IsBackground = True
         TCPs0Thread.Start(TGPort)
 
-        Dim TCPsThread As New Thread(AddressOf StartTCPsListen)
+        TCPsThread = New Thread(AddressOf StartTCPsListen)
         TCPsThread.IsBackground = True
         TCPsThread.Start(MYBindPort)
 
-        Dim CoreThread As New Thread(AddressOf CorePress)
+        CoreThread = New Thread(AddressOf CorePress)
         CoreThread.IsBackground = True
         CoreThread.Start()
 
 
 
     End Sub
+
+    Public Sub Close()
+
+
+
+    End Sub
+
 
     Private Sub StartTCPs0Listen(ByVal state As Object)
 
@@ -78,7 +90,19 @@ Public Class MTTCP
                 Dim te As TCPsQueueCSS = TCPsQueue.Dequeue()
                 Dim send_buf As String
 
-                send_buf = TCPc_Write(te.str)
+                For RetryTime = 1 To 10
+
+                    send_buf = TCPc_Write(te.str)
+
+                    If send_buf IsNot Nothing Then
+
+                        Exit For
+
+                    End If
+
+                Next
+
+
 
                 Dim send_Bytes() = Text.Encoding.ASCII.GetBytes(send_buf)
                 TCPsc(te.index).GetStream.Write(send_Bytes, 0, send_Bytes.Length)

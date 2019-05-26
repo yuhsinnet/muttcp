@@ -28,6 +28,7 @@ Partial Class Form1
         Me.AutoMode = New System.Windows.Forms.CheckBox()
         Me.Start_Button = New System.Windows.Forms.Button()
         Me.STOP_Button = New System.Windows.Forms.Button()
+        Me.MonitorText = New System.Windows.Forms.TextBox()
         Me.SuspendLayout()
         '
         'Label1
@@ -38,7 +39,7 @@ Partial Class Form1
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(456, 34)
         Me.Label1.TabIndex = 0
-        Me.Label1.Text = "目標設備端口  <->    本幾端口"
+        Me.Label1.Text = "目標設備端口  <->    本機端口"
         '
         'TGPort
         '
@@ -87,11 +88,21 @@ Partial Class Form1
         Me.STOP_Button.Text = "暫停"
         Me.STOP_Button.UseVisualStyleBackColor = True
         '
+        'MonitorText
+        '
+        Me.MonitorText.Location = New System.Drawing.Point(69, 187)
+        Me.MonitorText.Multiline = True
+        Me.MonitorText.Name = "MonitorText"
+        Me.MonitorText.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
+        Me.MonitorText.Size = New System.Drawing.Size(494, 231)
+        Me.MonitorText.TabIndex = 6
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(800, 450)
+        Me.Controls.Add(Me.MonitorText)
         Me.Controls.Add(Me.STOP_Button)
         Me.Controls.Add(Me.Start_Button)
         Me.Controls.Add(Me.AutoMode)
@@ -111,4 +122,5 @@ Partial Class Form1
     Friend WithEvents AutoMode As CheckBox
     Friend WithEvents Start_Button As Button
     Friend WithEvents STOP_Button As Button
+    Friend WithEvents MonitorText As TextBox
 End Class
