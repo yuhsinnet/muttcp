@@ -6,8 +6,8 @@
         SendTextBox.Text = "014EABCDEFG"
 
 
-        TGIP1.Text = "192.168.0.129"
-        TGPort1.Text = "1588"
+        TGIP1.Text = "192.168.0.108"
+        TGPort1.Text = "1501"
         BindPort1.Text = "8888"
 
         ServiceA = New MTTCP(TGIP1.Text, CInt(TGPort1.Text), CInt(BindPort1.Text))

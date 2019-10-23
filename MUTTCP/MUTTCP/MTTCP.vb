@@ -85,7 +85,7 @@ Public Class MTTCP
         Do
             For index = 0 To (TCPsc.Length - 1)
 
-                If TCPsc(index) Is Nothing Then
+                If ((TCPsc?(index)?.Client Is Nothing)) Then
 
 
                     TCPsc(index) = TCPs.AcceptTcpClient
@@ -167,7 +167,7 @@ Public Class MTTCP
         RaiseEvent PrintText("TCPsc is Disconnect >.< " & "  TCPsc(" & index & ")")
         TCPSendTime.Dispose()
         TCPsc(index).Close()
-        TCPsc(index) = Nothing
+
         TCPscThread(index).Abort()
         TCPscThread(index) = Nothing
 
