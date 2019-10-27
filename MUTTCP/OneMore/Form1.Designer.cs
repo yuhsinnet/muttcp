@@ -28,44 +28,67 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.TGIP_box = new System.Windows.Forms.TextBox();
+            this.Bind_box = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.TGPORT_box = new System.Windows.Forms.TextBox();
+            this.DLBox = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
-            // textBox1
+            // TGIP_box
             // 
-            this.textBox1.Location = new System.Drawing.Point(12, 12);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 22);
-            this.textBox1.TabIndex = 0;
+            this.TGIP_box.Location = new System.Drawing.Point(12, 12);
+            this.TGIP_box.Name = "TGIP_box";
+            this.TGIP_box.Size = new System.Drawing.Size(122, 22);
+            this.TGIP_box.TabIndex = 0;
+            this.TGIP_box.Text = "192.168.0.108";
             // 
-            // textBox2
+            // Bind_box
             // 
-            this.textBox2.Location = new System.Drawing.Point(149, 12);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(100, 22);
-            this.textBox2.TabIndex = 1;
+            this.Bind_box.Location = new System.Drawing.Point(230, 12);
+            this.Bind_box.Name = "Bind_box";
+            this.Bind_box.Size = new System.Drawing.Size(100, 22);
+            this.Bind_box.TabIndex = 1;
+            this.Bind_box.Text = "8888";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(118, 15);
+            this.label1.Location = new System.Drawing.Point(199, 15);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(25, 12);
             this.label1.TabIndex = 2;
             this.label1.Text = "<-->";
+            // 
+            // TGPORT_box
+            // 
+            this.TGPORT_box.Location = new System.Drawing.Point(140, 12);
+            this.TGPORT_box.Name = "TGPORT_box";
+            this.TGPORT_box.Size = new System.Drawing.Size(44, 22);
+            this.TGPORT_box.TabIndex = 3;
+            this.TGPORT_box.Text = "1501";
+            // 
+            // DLBox
+            // 
+            this.DLBox.Location = new System.Drawing.Point(12, 40);
+            this.DLBox.Multiline = true;
+            this.DLBox.Name = "DLBox";
+            this.DLBox.Size = new System.Drawing.Size(318, 398);
+            this.DLBox.TabIndex = 4;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.DLBox);
+            this.Controls.Add(this.TGPORT_box);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.Bind_box);
+            this.Controls.Add(this.TGIP_box);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -73,9 +96,11 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox TGIP_box;
+        private System.Windows.Forms.TextBox Bind_box;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox TGPORT_box;
+        private System.Windows.Forms.TextBox DLBox;
     }
 }
 
