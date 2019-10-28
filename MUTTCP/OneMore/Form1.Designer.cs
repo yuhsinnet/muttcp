@@ -1,5 +1,6 @@
 ﻿namespace OneMore
 {
+
     partial class Form1
     {
         /// <summary>
@@ -41,7 +42,7 @@
             this.TGIP_box.Name = "TGIP_box";
             this.TGIP_box.Size = new System.Drawing.Size(122, 22);
             this.TGIP_box.TabIndex = 0;
-            this.TGIP_box.Text = "192.168.0.108";
+            this.TGIP_box.Text = "192.168.0.79";
             // 
             // Bind_box
             // 
@@ -66,7 +67,7 @@
             this.TGPORT_box.Name = "TGPORT_box";
             this.TGPORT_box.Size = new System.Drawing.Size(44, 22);
             this.TGPORT_box.TabIndex = 3;
-            this.TGPORT_box.Text = "1501";
+            this.TGPORT_box.Text = "1589";
             // 
             // DLBox
             // 
