@@ -109,6 +109,8 @@ namespace OneMore
                     try
                     {
                         RX = WriteToPLCV2(str, Tcp_C);
+                        TCT_SC_Send(index, RX);
+
                     }
                     catch (Exception)
                     {
@@ -122,26 +124,25 @@ namespace OneMore
                         }
 
 
-                        break;
+
                     }
 
-                    byte[] RX_buf = Encoding.ASCII.GetBytes(RX);
 
-
-                    Tcp_SC[index].GetStream().Write(RX_buf, 0, RX_buf.Length);
 
 
 
                 }
-                else Thread.Sleep(20);
+                else Thread.Sleep(5);
 
 
             }
+        }
 
-
-
-
-
+        private void TCT_SC_Send(int index, string RX)
+        {
+            Tcp_SC[index].SendTimeout = 200;
+            byte[] RX_buf = Encoding.ASCII.GetBytes(RX);
+            Tcp_SC[index].GetStream().Write(RX_buf, 0, RX_buf.Length);
         }
 
         private void StartListen(object portobj)
